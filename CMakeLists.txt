@@ -2,7 +2,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 3.0.0)
 
 PROJECT("Hodgkin-Huxley")
 
-INCLUDE_DIRECTORIES( include )
+INCLUDE_DIRECTORIES( include /usr/local/Cellar/boost/1.76.0/include )
 
 ADD_DEFINITIONS( --std=c++11 )
 
