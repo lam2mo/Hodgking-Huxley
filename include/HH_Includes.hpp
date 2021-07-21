@@ -77,7 +77,7 @@
 
 
 #ifndef MGL_H
-#include "mglGraphics.hpp"
+//#include "mglGraphics.hpp"
 #define MGL_H
 #endif
 

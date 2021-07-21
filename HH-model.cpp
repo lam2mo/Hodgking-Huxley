@@ -217,7 +217,7 @@ int main(int argc, char **argv){
  
 	if(gengraphs!='n')
 	{
-		mglDrawFunction(parametros,POINTS,out_datafile);
+		//mglDrawFunction(parametros,POINTS,out_datafile);
 	}
 
 	exit(0);

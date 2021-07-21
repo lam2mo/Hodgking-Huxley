@@ -13,4 +13,4 @@ add_library(hhmod SHARED
 
 ADD_EXECUTABLE(hh-model HH-model )
 
-target_link_libraries(hh-model mgl hhmod)
+target_link_libraries(hh-model hhmod)
