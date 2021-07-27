@@ -83,7 +83,17 @@ void hhSolver(int POINTS, double tf, hh_model hhmodel,std::vector<double> y,std:
 
 	double h_step=tf/POINTS;
 
-	size_t steps = integrate(hhmodel,y,0.0,tf,h_step,push_back_state_and_time( y_vec , times ));
+    // Original:
+    //   size_t steps = integrate(hhmodel,y,0.0,tf,h_step,push_back_state_and_time( y_vec , times ));
+
+    // Full list of steppers:
+    //   https://www.boost.org/doc/libs/1_66_0/libs/numeric/odeint/doc/html/boost_numeric_odeint/getting_started/overview.html
+    //
+    typedef std::vector<double> state_t;
+    euler<state_t> stepper;
+    //runge_kutta4<state_t> stepper;
+    //runge_kutta_dopri5<state_t> stepper;
+    size_t steps = integrate_adaptive(stepper,hhmodel,y,0.0,tf,h_step,push_back_state_and_time( y_vec , times ));
   
 	/* output */
 	for( size_t i=0; i<=steps; i++ )
