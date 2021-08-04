@@ -46,55 +46,61 @@ using namespace boost::numeric::odeint;
 / Chapter 2.3 - The work of Hodgking-Huxley, pp 50-52
 / ===============================================================================*/
 
+/* Jim Sochacki
+   The gating functions from HH 1952 paper */
 
+/*! \def alpha_n
+ * \brief The alpha gating function for the n gate
+ *
+ */
 real alpha_n(real V)
 {
-     return (0.01*(V+50.0))/(1.0-exp(-(V+50.0)/10.0));
+     return (0.01*(10-V))/(exp((10-V)/10.0)-1);
 }
 
-/*! \def beta_n 
+/*! \def beta_n
  * \brief The beta gating function for the n gate
- * 
+ *
  */
 real beta_n(real V)
 {
-     return 0.125*exp(-(V+60.0)/80.0);
+     return 0.125*exp(-V/80.0);
 }
 
-/*! \def alpha_m 
+/*! \def alpha_m
  * \brief The alpha gating function for the m gate
- * 
+ *
  */
 real alpha_m(real V)
 {
-     return (0.1*(V+35.0))/(1-exp(-(V+35.0)/10.0));
+     return (0.1*(25.0-V))/(1-exp((25.0-V)/10.0));
 }
 
-/*! \def beta_m 
+/*! \def beta_m
  * \brief The beta gating function for the m gate
- * 
+ *
  */
 real beta_m(real V)
 {
-     return 4.0*exp(-(V+60.0)/18.0);
+     return 4.0*exp(-V/18.0);
 }
 
-/*! \def alpha_h 
+/*! \def alpha_h
  * \brief The alpha gating function for the h gate
- * 
+ *
  */
 real alpha_h(real V)
 {
-     return 0.07*exp(-(V+60.0)/20.0);
+     return 0.07*exp(-V/20.0);
 }
 
-/*! \def beta_h 
+/*! \def beta_h
  * \brief The beta gating function for the h gate
- * 
+ *
  */
 real beta_h(real V)
 {
-     return 1.0/(1.0+exp(-(V+30.0)/10.0));
+     return 1.0/(1.0+exp((30.0-V)/10.0));
 }
 
 void hh_model::operator()( const std::vector<real> &y , std::vector<real> &f , const real /* t */ )

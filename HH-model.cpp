@@ -86,7 +86,7 @@ int main(int argc, char **argv){
 
     cadna_init(-1, 0, 51, 4);
 
-    int POINTS=500;
+    int POINTS=20000;
     char verbosity='n',gengraphs='g', automatic='y';
     
     std::string paramfile = "parameters.txt";
