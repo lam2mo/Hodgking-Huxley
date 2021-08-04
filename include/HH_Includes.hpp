@@ -33,58 +33,27 @@
 
 // Program Headers
 
-#ifndef IOSTREAM_H
-    #include <iostream>
-    #define IOSTREAM_H
-#endif 
+#ifndef HH_INCLUDES
+#define HH_INCLUDES
 
-#ifndef  SSTRING_H
-  #include <string>
-  #define SSTRING_H
-#endif
-
-#ifndef IONMANIP_H
-    #include <iomanip>
-    #define IONMANIP_H
-#endif
-
-#ifndef FSTREAM_H
-    #include<fstream>
-    #define FSTREAM_H
-#endif
-
-#ifndef  SCMATH_H
-  #include <cmath>
-  #define SCMATH_H
-#endif
+#include <iostream>
+#include <string>
+#include <iomanip>
+#include <fstream>
+#include <cmath>
 
 // C old headers
-// #include <stdio.h>
-// #include <stdlib.h>
-#ifndef UNISTD_H
-    #include <unistd.h>
-    #define UNISTD_H
-#endif
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
 
 // ODEINT Headers
 
-#ifndef ODEINT_H
-	#include <vector>
-    #include <boost/numeric/odeint.hpp>
-    #define ODEINT_H
+#include <vector>
+#include <boost/numeric/odeint.hpp>
+
+#include <cadna.h>
+typedef double_st real;
+
 #endif
 
-
-
-#ifndef MGL_H
-//#include "mglGraphics.hpp"
-#define MGL_H
-#endif
-
-
-#ifndef CUSTOM_INCLUDES_H
-    #include "getInfoFromFile.hpp"
-    #include "HH_GatingFunctions.hpp"
-    #include "HH_Model_class.hpp"
-    #define CUSTOM_INCLUDES_H
-#endif

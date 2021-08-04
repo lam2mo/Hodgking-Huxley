@@ -34,8 +34,76 @@
 //\file HH_Model_ODES.hpp 
 
 #include "HH_Includes.hpp"
+#include "HH_Model_class.hpp"
 
 using namespace boost::numeric::odeint;
+
+/* ===============================================================================
+/ Defining some auxiliary "gating functions" for the Hodgking Huxley Model
+/ These are taken from book "Mathematical aspects of the Hodgking-Huxley
+/ Neural theory"
+/ From Janne Cronin
+/ Chapter 2.3 - The work of Hodgking-Huxley, pp 50-52
+/ ===============================================================================*/
+
+
+real alpha_n(real V)
+{
+     return (0.01*(V+50.0))/(1.0-exp(-(V+50.0)/10.0));
+}
+
+/*! \def beta_n 
+ * \brief The beta gating function for the n gate
+ * 
+ */
+real beta_n(real V)
+{
+     return 0.125*exp(-(V+60.0)/80.0);
+}
+
+/*! \def alpha_m 
+ * \brief The alpha gating function for the m gate
+ * 
+ */
+real alpha_m(real V)
+{
+     return (0.1*(V+35.0))/(1-exp(-(V+35.0)/10.0));
+}
+
+/*! \def beta_m 
+ * \brief The beta gating function for the m gate
+ * 
+ */
+real beta_m(real V)
+{
+     return 4.0*exp(-(V+60.0)/18.0);
+}
+
+/*! \def alpha_h 
+ * \brief The alpha gating function for the h gate
+ * 
+ */
+real alpha_h(real V)
+{
+     return 0.07*exp(-(V+60.0)/20.0);
+}
+
+/*! \def beta_h 
+ * \brief The beta gating function for the h gate
+ * 
+ */
+real beta_h(real V)
+{
+     return 1.0/(1.0+exp(-(V+30.0)/10.0));
+}
+
+void hh_model::operator()( const std::vector<real> &y , std::vector<real> &f , const real /* t */ )
+{
+    f[0]=(1/parameters[0])*(parameters[1]-parameters[2]*pow(y[1],3)*y[2]*(y[0]-parameters[3])-parameters[4]*pow(y[3],4)*(y[0]-parameters[5])-parameters[6]*(y[0]-parameters[7]));
+    f[1]=alpha_m(y[0])*(1-y[1])-beta_m(y[0])*y[1];
+    f[2]=alpha_h(y[0])*(1-y[2])-beta_h(y[0])*y[2];
+    f[3]=alpha_n(y[0])*(1-y[3])-beta_n(y[0])*y[3];
+}
 
 /*! \brief Structure that estores each set of points during the integration step.
  *
@@ -47,18 +115,19 @@ using namespace boost::numeric::odeint;
 
 struct push_back_state_and_time
 {
-    std::vector< std::vector<double> >& m_states;
-    std::vector< double >& m_times;
+    std::vector< std::vector<real> >& m_states;
+    std::vector< real >& m_times;
 
-    push_back_state_and_time( std::vector< std::vector<double> > &states , std::vector< double > &times )
+    push_back_state_and_time( std::vector< std::vector<real> > &states , std::vector< real > &times )
 	: m_states( states ) , m_times( times ) { }
 
-    void operator()( const std::vector<double> &x , double t )
+    void operator()( const std::vector<real> &x , real t )
     {
     	m_states.push_back( x );
     	m_times.push_back( t );
     }
 };
+
 
 /*! \brief The ODE Solver for the HH Model
  *
@@ -71,17 +140,17 @@ struct push_back_state_and_time
  * \param out_datafile	The filename where the solution is going to be placed
  */
 
-void hhSolver(int POINTS, double tf, hh_model hhmodel,std::vector<double> y,std::string out_datafile)
+void hhSolver(int POINTS, real tf, hh_model hhmodel,std::vector<real> y,std::string out_datafile)
 {
-	std::vector<std::vector<double>> y_vec;
-	std::vector<double> times;
+	std::vector<std::vector<real>> y_vec;
+	std::vector<real> times;
 
 	std::ofstream hh_action_potential(out_datafile.c_str());
 	std::ofstream hh_data((out_datafile+"-all").c_str());
 
 	//hh_model hhmodel(parametros);
 
-	double h_step=tf/POINTS;
+	real h_step=tf/POINTS;
 
     // Original:
     //   size_t steps = integrate(hhmodel,y,0.0,tf,h_step,push_back_state_and_time( y_vec , times ));
@@ -89,11 +158,11 @@ void hhSolver(int POINTS, double tf, hh_model hhmodel,std::vector<double> y,std:
     // Full list of steppers:
     //   https://www.boost.org/doc/libs/1_66_0/libs/numeric/odeint/doc/html/boost_numeric_odeint/getting_started/overview.html
     //
-    typedef std::vector<double> state_t;
-    euler<state_t> stepper;
-    //runge_kutta4<state_t> stepper;
+    typedef std::vector<real> state_t;
+    //euler<state_t> stepper;
+    runge_kutta4<state_t> stepper;
     //runge_kutta_dopri5<state_t> stepper;
-    size_t steps = integrate_adaptive(stepper,hhmodel,y,0.0,tf,h_step,push_back_state_and_time( y_vec , times ));
+	size_t steps = integrate_adaptive(stepper,hhmodel,y,real(0.0),tf,h_step,push_back_state_and_time( y_vec , times ));
   
 	/* output */
 	for( size_t i=0; i<=steps; i++ )

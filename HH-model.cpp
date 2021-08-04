@@ -32,20 +32,59 @@
 */
 
 #include "HH_Includes.hpp"
+#include "HH_Model_class.hpp"
+//#include "mglGraphics.hpp"
 
-//using namespace boost::numeric::odeint;
 
-//void hhSolver(int POINTS, double tf, hh_model hhmodel,std::vector<double> y,std::string out_datafile);
+// ==========================================================================
+// 			FILE I/O HELPERS
+// ==========================================================================
+
+void getInfoFromFile(std::string filename, real buffer[])
+{
+    std::ifstream data;
+    char sBuffer[20];
+    int i=0;
+    
+
+    data.open (filename.c_str(), std::ifstream::in);
+  
+    while(data.eof()!=true)
+    {
+		data.getline(sBuffer,20);
+		buffer[i]=atof(sBuffer);
+		i++;
+    }
+   
+       data.close();
+}
+
+void getInfoFromFile(std::string filename, std::vector<real> buffer)
+{
+    std::ifstream data;
+    char sBuffer[20];
+    int i=0;
+    
+
+    data.open (filename.c_str(), std::ifstream::in);
+  
+    while(data.eof()!=true)
+    {
+		data.getline(sBuffer,20);
+		buffer.push_back(atof(sBuffer));
+		i++;
+    }
+   
+       data.close();
+}
 
 // ==========================================================================
 // 			MAIN CODE
 // ==========================================================================
-//\file HH-model.cpp
-/*! 
- *  \brief The Main function of the model
- */
 
 int main(int argc, char **argv){
+
+    cadna_init(-1, 0, 51, 4);
 
     int POINTS=500;
     char verbosity='n',gengraphs='g', automatic='y';
@@ -59,11 +98,11 @@ int main(int argc, char **argv){
     
     // ==========================================================================
 
-    double h_step;  /// h_step This will be the h_step for integrate, will be redefined on line 333
-	std::vector<double> parametros; /// parametros[8] Here one stores the ODES parameters for solvig, i.e membrane capacitance, conductances and so on
+    real h_step;  /// h_step This will be the h_step for integrate, will be redefined on line 333
+	std::vector<real> parametros; /// parametros[8] Here one stores the ODES parameters for solvig, i.e membrane capacitance, conductances and so on
     
-    double t=0.0;       /// t Starting time, this variable is a "time buffer"
-    double tf=25.0;	/// tf 25 ms for time integration
+    real t=0.0;       /// t Starting time, this variable is a "time buffer"
+    real tf=25.0;	/// tf 25 ms for time integration
 
 
 // ==========================================================================
@@ -137,7 +176,7 @@ int main(int argc, char **argv){
 	  
 	// Here the solution is stored
 	// definde here in order to have a container for the initial conditions
-	std::vector<double> y; 
+	std::vector<real> y; 
 
 	if (automatic=='y')
     {
@@ -213,12 +252,14 @@ int main(int argc, char **argv){
 
 	hh_model hhmodel(parametros);
 
-	hhSolver(POINTS, tf, hhmodel, y, out_datafile);
+    hhSolver(POINTS, tf, hhmodel, y, out_datafile);
  
 	if(gengraphs!='n')
 	{
 		//mglDrawFunction(parametros,POINTS,out_datafile);
 	}
+
+    cadna_end();
 
 	exit(0);
 }//End of Main Code

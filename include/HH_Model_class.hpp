@@ -28,6 +28,21 @@
     
 */
 
+#include "HH_Includes.hpp"
+
+
+/*
+ * Gating functions
+ */
+
+real alpha_n(real V);
+real beta_n(real V);
+real alpha_m(real V);
+real beta_m(real V);
+real alpha_h(real V);
+real beta_h(real V);
+
+
 /* ==========================================================================
 /     Defining the ODE system for the Hodgking Huxley Model
 / ==========================================================================*/
@@ -35,7 +50,7 @@
 /*!
  * \brief Defines the ODE system proposed by Hodgking and Huxley as a class
  *
- * The default constructor receives a std::vector<double> that contains the parameters of the model in the order
+ * The default constructor receives a std::vector<real> that contains the parameters of the model in the order
  *   * Membrane capacitance 
  *   * Induced current on axon, 0 means no external current 
  *   * Na conductances
@@ -52,38 +67,15 @@ class hh_model
 {
 	private:
 	
-		std::vector<double> parameters;
+		std::vector<real> parameters;
 
 	public:
 
-		hh_model( std::vector<double> params ) : parameters(params) { }
+		hh_model( std::vector<real> params ) : parameters(params) { }
 
-		void operator()( const std::vector<double> &y , std::vector<double> &f , const double /* t */ )
-		{
-			f[0]=(1/parameters[0])*(parameters[1]-parameters[2]*pow(y[1],3)*y[2]*(y[0]-parameters[3])-parameters[4]*pow(y[3],4)*(y[0]-parameters[5])-parameters[6]*(y[0]-parameters[7]));
-		    f[1]=alpha_m(y[0])*(1-y[1])-beta_m(y[0])*y[1];
-		    f[2]=alpha_h(y[0])*(1-y[2])-beta_h(y[0])*y[2];
-		    f[3]=alpha_n(y[0])*(1-y[3])-beta_n(y[0])*y[3];
-		}
+        void operator()( const std::vector<real>&, std::vector<real>&, const real );
 };
 
-void hhSolver(int POINTS, double tf, hh_model hhmodel,std::vector<double> y,std::string out_datafile);
 
+void hhSolver(int POINTS, real tf, hh_model hhmodel,std::vector<real> y,std::string out_datafile);
 
-////[ integrate_observer
-
-//struct push_back_state_and_time
-//{
-    //std::vector< std::vector<double> >& m_states;
-    //std::vector< double >& m_times;
-
-    //push_back_state_and_time( std::vector< std::vector<double> > &states , std::vector< double > &times )
-	//: m_states( states ) , m_times( times ) { }
-
-    //void operator()( const std::vector<double> &x , double t )
-    //{
-    	//m_states.push_back( x );
-    	//m_times.push_back( t );
-    //}
-//};
-//]
